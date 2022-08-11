@@ -43,12 +43,10 @@ services:
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "postgres_db"
     volumes:
-      - "db-data:/home/ubuntu/B2Day5/sql_scripts/:/docker-entrypoint-initdb.d"
+      - "/home/ubuntu/B2Day5/sql_scripts/:/docker-entrypoint-initdb.d"
     networks:
       - private
 
-volumes:
-  db-data:
 
 networks:
   public:

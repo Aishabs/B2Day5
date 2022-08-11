@@ -4,36 +4,34 @@ services:
   api:
     build: 
       context: ./api
-    container_name: api
     environment:
       - CONNECTION_STRING=postgres://postgres:postgres@db/postgres_db
     command: node index.js
     volumes:
      - ./api:/api
+    depends_on:
+      - db
     ports:
       - "3001:3001"
     networks:
       - private
       - public
-    depends_on:
-      - db
 
 
   web:
     build: 
       context: ./web
-    container_name: web
     environment:
       - API_URL=http://api:3001/data
     command: node index.js
     volumes:
       - ./web:/web
-    ports:
-      - "80:3000"
-    networks:
-      - public
     depends_on:
       - api
+    networks:
+      - public
+    ports:
+      - "80:3000"
 
 
   db:
@@ -45,9 +43,12 @@ services:
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "postgres_db"
     volumes:
-      - "/home/ubuntu/B2Day5/sql_scripts/:/docker-entrypoint-initdb.d"
+      - "db-data:/home/ubuntu/B2Day5/sql_scripts/:/docker-entrypoint-initdb.d"
     networks:
       - private
+
+volumes:
+  db-data:
 
 networks:
   public:

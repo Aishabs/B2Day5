@@ -1,0 +1,52 @@
+version: "3.7"
+
+services:
+  api:
+    environment:
+      - CONNECTION_STRING= postgres://demo_user:demo_user@db/demo_db
+    build: 
+      context: ./api
+      dockerfile: ./api/Dockerfile
+    
+    volumes:
+     - ./api:/api
+    ports:
+      - "3001:80"
+    networks:
+      - public
+      - private
+      
+
+  web:
+    build: 
+      context: ./web
+      dockerfile: ./web/Dockerfile
+   
+    volumes:
+      - ./web:/web
+    ports:
+      - "80:80"
+    networks:
+      - public
+      - private
+
+  db:
+    image: postgres:11.2-alpine
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+      - "db-config: /etc/postgresql/11.2-alpine /main"
+    ports: 
+     - "5432"
+    networks:
+      - private
+
+volumes:
+  db-data:
+  db-config:
+
+networks:
+  public:
+  private:

@@ -1,5 +1,7 @@
 FROM node:10-alpine
 
+ENV API_URL=${API_URL}
+
 WORKDIR /var/www
 COPY . .
 RUN npm install

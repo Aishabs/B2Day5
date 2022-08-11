@@ -2,50 +2,52 @@ version: "3.7"
 
 services:
   api:
-    environment:
-      - CONNECTION_STRING= postgres://demo_user:demo_user@db/demo_db
     build: 
       context: ./api
-      dockerfile: ./api/Dockerfile
-    
+    container_name: api
+    environment:
+      - CONNECTION_STRING=postgres://postgres:postgres@db/postgres_db
+    command: node index.js
     volumes:
      - ./api:/api
     ports:
-      - "3001:80"
+      - "3001:3001"
     networks:
-      - public
       - private
-      
+      - public
+    depends_on:
+      - db
+
 
   web:
     build: 
       context: ./web
-      dockerfile: ./web/Dockerfile
-   
+    container_name: web
+    environment:
+      - API_URL=http://api:3001/data
+    command: node index.js
     volumes:
       - ./web:/web
     ports:
-      - "80:80"
+      - "80:3000"
     networks:
       - public
-      - private
+    depends_on:
+      - api
+
 
   db:
     image: postgres:11.2-alpine
+    ports: ["5432"]
+    container_name: db
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "postgres_db"
     volumes:
-      - "db-data:/var/lib/postgresql/data"
-      - "db-config: /etc/postgresql/11.2-alpine /main"
-    ports: 
-     - "5432"
+      - "/home/ubuntu/B2Day5/sql_scripts/:/docker-entrypoint-initdb.d"
     networks:
       - private
-
-volumes:
-  db-data:
-  db-config:
 
 networks:
   public:

@@ -1,5 +1,7 @@
 FROM node:10-alpine
 
+ENV CONNECTION_STRING=${CONNECTION_STRING}
+
 WORKDIR /var/www
 COPY . .
 RUN npm install
